@@ -5,16 +5,17 @@ import type { ScriptableContext, ChartData } from "chart.js";
 import { Chart } from "@/lib/charts";
 import { diretoriaResumo, vgvDiretorias } from "@/data/dashboard-data";
 import {
+  CHART,
   createVerticalBarOptions,
   directoriaBarGradient,
-  metaPointStyle,
 } from "@/lib/chart-theme";
 import { currencyFormatter } from "@/lib/formatters";
 import { Card } from "@/components/ui/Card";
 import { ChartAccessible } from "@/components/ui/ChartAccessible";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
-export function SlideVGVDiretoria() {  const baseId = useId();
+export function SlideVGVDiretoria() {
+  const baseId = useId();
 
   const chartData = useMemo(
     () => ({
@@ -38,11 +39,6 @@ export function SlideVGVDiretoria() {  const baseId = useId();
             },
           },
         },
-        {
-          label: "Meta Mínima",
-          data: vgvDiretorias.metas,
-          ...metaPointStyle,
-        },
       ],
     }),
     [],
@@ -52,16 +48,46 @@ export function SlideVGVDiretoria() {  const baseId = useId();
     () =>
       createVerticalBarOptions({
         plugins: {
-          legend: { position: "bottom" },
+          legend: {
+            position: "bottom",
+            labels: {
+              usePointStyle: true,
+              generateLabels: () => [
+                {
+                  text: "Saldo VGV",
+                  fillStyle: CHART.accent,
+                  strokeStyle: CHART.accent,
+                  lineWidth: 0,
+                  hidden: false,
+                  index: 0,
+                  datasetIndex: 0,
+                },
+                {
+                  text: "Meta Mínima",
+                  fillStyle: CHART.danger,
+                  strokeStyle: CHART.danger,
+                  lineWidth: 2,
+                  hidden: false,
+                  index: 1,
+                  datasetIndex: -1,
+                },
+              ],
+            },
+          },
+          metaHorizontalLines: { values: vgvDiretorias.metas },
           tooltip: {
             callbacks: {
               label: (ctx) => {
                 const val = ctx.parsed.y;
                 if (val == null) return "";
-                const label = ctx.dataset.label ?? "";
                 const meta = vgvDiretorias.metas[ctx.dataIndex];
                 const perc = meta ? ((val / meta) * 100).toFixed(1) : "0";
-                return `${label}: ${currencyFormatter.format(val)} (${perc}% da meta)`;
+                return `Saldo VGV: ${currencyFormatter.format(val)} (${perc}% da meta)`;
+              },
+              afterBody: (items) => {
+                if (!items.length) return [];
+                const meta = vgvDiretorias.metas[items[0].dataIndex];
+                return [`Meta mínima: ${currencyFormatter.format(meta)}`];
               },
             },
           },

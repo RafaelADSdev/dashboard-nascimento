@@ -11,7 +11,7 @@ import {
 import {
   createDoughnutOptions,
   createHorizontalBarOptions,
-  metaPointStyle,
+  CHART,
   performanceGradient,
   segmentoDataset,
 } from "@/lib/chart-theme";
@@ -61,20 +61,46 @@ export function SlideDiretoriaDetalhe() {
             },
           },
         },
-        {
-          label: "Meta Mínima",
-          data: data.metas,
-          ...metaPointStyle,
-        },
       ],
     }),
     [data],
   );
 
+  const metaMinima = useMemo(() => data.metas[0] ?? 0, [data.metas]);
+
   const equipesOptions = useMemo(
     () =>
       createHorizontalBarOptions({
         plugins: {
+          legend: {
+            display: true,
+            position: "bottom",
+            labels: {
+              usePointStyle: true,
+              padding: 16,
+              generateLabels: () => [
+                {
+                  text: "Realizado",
+                  fillStyle: CHART.success,
+                  strokeStyle: CHART.success,
+                  lineWidth: 0,
+                  hidden: false,
+                  index: 0,
+                  datasetIndex: 0,
+                },
+                {
+                  text: "Meta Mínima",
+                  fillStyle: CHART.danger,
+                  strokeStyle: CHART.danger,
+                  lineWidth: 2,
+                  hidden: false,
+                  index: 1,
+                  datasetIndex: -1,
+                },
+              ],
+            },
+          },
+          metaVerticalLine: { value: metaMinima },
           tooltip: {
             callbacks: {
               label: (ctx) => {
@@ -84,11 +110,15 @@ export function SlideDiretoriaDetalhe() {
                 const perc = meta ? ((val / meta) * 100).toFixed(1) : "0";
                 return `${ctx.dataset.label}: ${currencyFormatter.format(val)} (${perc}%)`;
               },
+              afterBody: (items) => {
+                if (!items.length) return [];
+                return [`Meta mínima: ${currencyFormatter.format(metaMinima)}`];
+              },
             },
           },
         },
       }),
-    [data.metas],
+    [data.metas, metaMinima],
   );
 
   const segmentosChartData = useMemo(

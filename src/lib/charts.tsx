@@ -21,7 +21,7 @@ import {
   Doughnut as DoughnutComponent,
   Pie as PieComponent,
 } from "react-chartjs-2";
-import { CHART, chartGlowPlugin, datalabelDefaults } from "./chart-theme";
+import { CHART, chartGlowPlugin, datalabelDefaults, metaHorizontalLinesPlugin, metaVerticalLinePlugin } from "./chart-theme";
 
 let registered = false;
 
@@ -42,6 +42,8 @@ function registerCharts() {
     Legend,
     ChartDataLabels,
     chartGlowPlugin,
+    metaVerticalLinePlugin,
+    metaHorizontalLinesPlugin,
   );
   ChartJS.defaults.color = CHART.muted;
   ChartJS.defaults.font.family = "var(--font-inter), Inter, sans-serif";

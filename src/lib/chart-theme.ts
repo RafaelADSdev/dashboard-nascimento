@@ -1,5 +1,16 @@
 import type { ChartOptions, Plugin, ScriptableContext } from "chart.js";
 
+declare module "chart.js" {
+  interface PluginOptionsByType<TType> {
+    metaVerticalLine?: {
+      value?: number;
+    };
+    metaHorizontalLines?: {
+      values?: number[];
+    };
+  }
+}
+
 export const CHART = {
   accent: "#1d3557",
   accentLight: "#457b9d",
@@ -313,4 +324,60 @@ export const chartGlowPlugin: Plugin = {
   id: "chartGlow",
   beforeDatasetDraw() {},
   afterDatasetDraw() {},
+};
+
+export const metaVerticalLinePlugin: Plugin<"bar"> = {
+  id: "metaVerticalLine",
+  afterDatasetsDraw(chart) {
+    const pluginOpts = (chart.options.plugins as { metaVerticalLine?: { value?: number } })
+      ?.metaVerticalLine;
+    const value = pluginOpts?.value;
+    if (value == null) return;
+
+    const { ctx, chartArea, scales } = chart;
+    const xScale = scales.x;
+    if (!chartArea || !xScale) return;
+
+    const x = xScale.getPixelForValue(value);
+    if (x < chartArea.left - 1 || x > chartArea.right + 1) return;
+
+    ctx.save();
+    ctx.strokeStyle = CHART.danger;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x, chartArea.top);
+    ctx.lineTo(x, chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+  },
+};
+
+export const metaHorizontalLinesPlugin: Plugin<"bar"> = {
+  id: "metaHorizontalLines",
+  afterDatasetsDraw(chart) {
+    const values = (chart.options.plugins as { metaHorizontalLines?: { values?: number[] } })
+      ?.metaHorizontalLines?.values;
+    if (!values?.length) return;
+
+    const { ctx, chartArea, scales } = chart;
+    const yScale = scales.y;
+    if (!chartArea || !yScale) return;
+
+    const uniqueMetas = [...new Set(values)];
+
+    ctx.save();
+    ctx.strokeStyle = CHART.danger;
+    ctx.lineWidth = 2;
+
+    for (const meta of uniqueMetas) {
+      const y = yScale.getPixelForValue(meta);
+      if (y < chartArea.top - 1 || y > chartArea.bottom + 1) continue;
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left, y);
+      ctx.lineTo(chartArea.right, y);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  },
 };
