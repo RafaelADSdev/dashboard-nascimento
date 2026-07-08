@@ -1,0 +1,68 @@
+
+> dashboard-nascimento@0.1.0 dev
+> next dev --port 3000
+
+   ▲ Next.js 15.5.20
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.56.2:3000
+
+ ✓ Starting...
+ ✓ Ready in 3.5s
+ ○ Compiling / ...
+ ✓ Compiled / in 7s (596 modules)
+ GET / 200 in 7859ms
+ GET / 200 in 70ms
+ GET / 200 in 124ms
+ GET / 200 in 117ms
+ GET / 200 in 95ms
+ ✓ Compiled in 471ms (573 modules)
+ ✓ Compiled in 324ms (587 modules)
+ ✓ Compiled in 312ms (587 modules)
+ ✓ Compiled in 306ms (587 modules)
+ ✓ Compiled in 232ms (587 modules)
+ ✓ Compiled in 826ms (587 modules)
+ ✓ Compiled in 691ms (587 modules)
+ ✓ Compiled in 308ms (587 modules)
+ ✓ Compiled in 317ms (587 modules)
+ ✓ Compiled in 256ms (587 modules)
+ ✓ Compiled in 554ms (587 modules)
+ ✓ Compiled in 632ms (587 modules)
+ ✓ Compiled in 368ms (587 modules)
+ ✓ Compiled in 453ms (587 modules)
+ ✓ Compiled in 256ms (587 modules)
+ ✓ Compiled in 343ms (587 modules)
+ ✓ Compiled in 358ms (587 modules)
+ ✓ Compiled in 331ms (587 modules)
+ ✓ Compiled in 247ms (587 modules)
+ ✓ Compiled in 366ms (587 modules)
+ ✓ Compiled in 1860ms (573 modules)
+ ✓ Compiled in 576ms (573 modules)
+ ✓ Compiled in 441ms (573 modules)
+ ✓ Compiled in 1028ms (573 modules)
+ ✓ Compiled in 508ms (573 modules)
+ ✓ Compiled in 471ms (573 modules)
+ ✓ Compiled in 463ms (573 modules)
+ ✓ Compiled in 318ms (573 modules)
+ ✓ Compiled in 289ms (573 modules)
+ GET / 200 in 402ms
+ GET / 200 in 66ms
+ ✓ Compiled in 1275ms (573 modules)
+ ✓ Compiled in 613ms (573 modules)
+ ✓ Compiled in 351ms (575 modules)
+ ✓ Compiled in 392ms (575 modules)
+ ✓ Compiled in 291ms (575 modules)
+ ✓ Compiled in 355ms (575 modules)
+ ✓ Compiled in 374ms (575 modules)
+ ✓ Compiled in 467ms (589 modules)
+ ✓ Compiled in 629ms (589 modules)
+ ✓ Compiled in 428ms (589 modules)
+ ✓ Compiled in 256ms (589 modules)
+ ✓ Compiled in 426ms (589 modules)
+ ✓ Compiled in 298ms (589 modules)
+ ✓ Compiled in 273ms (589 modules)
+ ✓ Compiled in 410ms (589 modules)
+ ✓ Compiled in 317ms (575 modules)
+ ✓ Compiled in 831ms (575 modules)
+ ✓ Compiled in 540ms (575 modules)
+ ✓ Compiled in 347ms (575 modules)
+ ✓ Compiled in 282ms (575 modules)

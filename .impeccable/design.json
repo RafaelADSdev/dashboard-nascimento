@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-07-08T16:45:00.000Z",
+  "title": "Design System: Dashboard Nascimento",
+  "extensions": {
+    "colorMeta": {
+      "navy-authority": {
+        "role": "primary",
+        "displayName": "Navy Authority",
+        "canonical": "oklch(0.35 0.075 250)",
+        "tonalRamp": [
+          "oklch(0.15 0.05 250)",
+          "oklch(0.22 0.06 250)",
+          "oklch(0.28 0.07 250)",
+          "oklch(0.35 0.075 250)",
+          "oklch(0.45 0.07 250)",
+          "oklch(0.58 0.06 250)",
+          "oklch(0.72 0.04 250)",
+          "oklch(0.88 0.02 250)"
+        ]
+      },
+      "cool-canvas": {
+        "role": "neutral",
+        "displayName": "Cool Canvas",
+        "canonical": "oklch(0.98 0.004 250)",
+        "tonalRamp": [
+          "oklch(0.55 0.02 250)",
+          "oklch(0.65 0.018 250)",
+          "oklch(0.75 0.015 250)",
+          "oklch(0.85 0.01 250)",
+          "oklch(0.91 0.008 250)",
+          "oklch(0.94 0.006 250)",
+          "oklch(0.97 0.005 250)",
+          "oklch(0.99 0.003 250)"
+        ]
+      },
+      "surface-white": {
+        "role": "neutral",
+        "displayName": "Surface White",
+        "canonical": "oklch(1 0 0)",
+        "tonalRamp": [
+          "oklch(0.5 0 0)",
+          "oklch(0.6 0 0)",
+          "oklch(0.7 0 0)",
+          "oklch(0.8 0 0)",
+          "oklch(0.88 0 0)",
+          "oklch(0.94 0 0)",
+          "oklch(0.98 0 0)",
+          "oklch(1 0 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": { "displayName": "Title", "purpose": "Toolbar heading per active view." },
+      "metric": { "displayName": "Metric", "purpose": "KPI numbers and gauge values." },
+      "body": { "displayName": "Body", "purpose": "Table cells, chart labels, general copy." },
+      "label": { "displayName": "Label", "purpose": "Card titles, column headers, tab labels." }
+    },
+    "shadows": [
+      {
+        "name": "filter-panel",
+        "value": "0 4px 16px rgba(43, 52, 64, 0.1)",
+        "purpose": "Dropdown filter panel above content."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-standard",
+        "value": "ease",
+        "purpose": "Default 200ms transitions for buttons, tabs, view fade."
+      }
+    ],
+    "breakpoints": [
+      { "name": "md", "value": "1100px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main action — Atualizar.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><path d=\"M21 12a9 9 0 1 1-2.64-6.36\"/><path d=\"M21 3v6h-6\"/></svg> Atualizar</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid #1d3557; background: #1d3557; color: #fff; font-family: Inter, system-ui, sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.2s ease; } .ds-btn-primary:hover { background: #14253d; border-color: #14253d; } .ds-btn-primary:focus-visible { outline: 2px solid #457b9d; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Toolbar actions — Filtros, Exportar.",
+      "html": "<button class=\"ds-btn-secondary\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><path d=\"M4 6h16M7 12h10M10 18h4\"/></svg> Filtros</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; border: 1px solid #e4e7ec; background: #fff; color: #5a6573; font-family: Inter, system-ui, sans-serif; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: background 0.2s ease; } .ds-btn-secondary:hover { background: #f0f2f5; color: #2b3440; } .ds-btn-secondary:focus-visible { outline: 2px solid #457b9d; outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Chart and data containers.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Equipes: VGV vs Meta Mínima</div><div class=\"ds-card-body\">Conteúdo do gráfico</div></div>",
+      "css": ".ds-card { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: 20px; font-family: Inter, system-ui, sans-serif; } .ds-card-title { font-size: 0.8rem; font-weight: 600; color: #5a6573; margin-bottom: 14px; } .ds-card-body { color: #2b3440; font-size: 0.875rem; }"
+    },
+    {
+      "name": "Status Badge Danger",
+      "kind": "chip",
+      "refersTo": "badge-danger",
+      "description": "Below-target status indicator.",
+      "html": "<span class=\"ds-badge-danger\">Abaixo da Meta</span>",
+      "css": ".ds-badge-danger { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; background: oklch(0.96 0.03 25); color: #ef4444; font-family: Inter, system-ui, sans-serif; }"
+    },
+    {
+      "name": "Filter Panel Item",
+      "kind": "nav",
+      "refersTo": "filter-panel-item",
+      "description": "Active view option inside Filtros dropdown.",
+      "html": "<button class=\"ds-filter-item\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><path d=\"M4 21V5a1 1 0 0 1 1-1h5v17\"/><path d=\"M10 21V9h10v12\"/></svg><span>Detalhamento por diretoria</span><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M5 12l5 5L19 7\"/></svg></button>",
+      "css": ".ds-filter-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px; border: none; border-radius: 8px; background: oklch(0.94 0.025 250); color: #1d3557; font-family: Inter, system-ui, sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: left; } .ds-filter-item:hover { background: oklch(0.92 0.03 250); } .ds-filter-item span { flex: 1; }"
+    },
+    {
+      "name": "Tab Active",
+      "kind": "chip",
+      "refersTo": "tab-active",
+      "description": "Diretoria selector tab.",
+      "html": "<button class=\"ds-tab-active\">Albuquerque</button>",
+      "css": ".ds-tab-active { padding: 8px 14px; border-radius: 8px; border: 1px solid oklch(0.88 0.03 250); background: oklch(0.94 0.025 250); color: #1d3557; font-family: Inter, system-ui, sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Sala de Comando",
+    "overview": "Um dashboard de briefing executivo para liderança comercial imobiliária. Interface clara, fria e confiante — pensada para salas de reunião com leitura rápida de KPIs. O detalhamento por diretoria é a âncora; filtros abrem recortes sem transformar a ferramenta em site de marketing.",
+    "keyCharacteristics": [
+      "Tema claro por padrão, fundo cool-neutral e cards brancos",
+      "Azul marinho como único acento forte",
+      "Inter em pesos 400–700, escala fixa em rem",
+      "Profundidade por borda tonal, não por sombra pesada",
+      "Gráficos com paleta semântica + navy para dados estruturais"
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Navy carrega ações primárias e dados estruturais. Cores saturadas aparecem só em dados com significado.", "section": "colors" },
+      { "name": "The Fixed Scale Rule", "body": "Sem clamp em headings de produto. Responsividade é estrutural, não tipográfica fluida.", "section": "typography" },
+      { "name": "The Flat Card Rule", "body": "Cards usam borda sólida OU sombra leve, nunca os dois como decoração.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do manter contraste ≥4.5:1 em texto de corpo sobre fundos claros",
+      "Do usar navy para a ação primária e dados estruturais",
+      "Do respeitar prefers-reduced-motion em transições e gráficos"
+    ],
+    "donts": [
+      "Don't usar visual AI slop: gradientes decorativos, glassmorphism, cards idênticos em grid repetitivo",
+      "Don't combinar border 1px solid com box-shadow de blur ≥16px no mesmo card",
+      "Don't usar border-left colorido >1px em alertas",
+      "Don't transformar o dashboard em landing page com hero promocional"
+    ]
+  }
+}

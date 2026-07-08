@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Resultados Junho V2 - Imobiliária Nascimento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        :root {
+            --bg-color: #0a192f;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-dim: #a8b2d1;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --accent: #3b82f6;
+            --font-main: 'Inter', sans-serif;
+            --font-title: 'Poppins', sans-serif;
+            --transition-speed: 500ms;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            font-size: 14px; /* Base size for 1366x768 compatibility */
+        }
+
+        @media (min-width: 1600px) {
+            body { font-size: 16px; }
+        }
+
+        .dashboard-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 2vh 4vw;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-speed) ease-in-out, transform var(--transition-speed) ease-in-out;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.98);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2vh;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1vh;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-family: var(--font-title);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .content-grid {
+            flex-grow: 1;
+            display: grid;
+            gap: 20px;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 0;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        /* Standardized Components */
+        .metric-value { font-size: 2.5rem; font-weight: 700; }
+        .metric-label { font-size: 0.85rem; color: var(--text-dim); }
+        .metric-sub { font-size: 1.1rem; margin-top: 5px; }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge-danger { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+
+        /* Navigation Controls */
+        .nav-dots {
+            position: absolute;
+            bottom: 2vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: white;
+            padding: 15px 10px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 100;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        .nav-arrow:hover { background: rgba(255, 255, 255, 0.15); }
+        .prev { left: 1vw; }
+        .next { right: 1vw; }
+
+        /* Tabs for Diretoria Slide */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        .tab {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+        }
+        .tab.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Dynamic Content Transition */
+        .dynamic-content {
+            transition: opacity 0.3s ease-in-out;
+            display: grid;
+            gap: 20px;
+            flex-grow: 1;
+            min-height: 0;
+        }
+        .dynamic-content.fade-out { opacity: 0; }
+
+        /* Specific Layouts */
+        .grid-3-1 { grid-template-columns: 2fr 1fr; }
+        .grid-1-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .grid-2-2 { grid-template-columns: 1fr 1fr; grid-template-rows: 1.2fr 1fr; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th { text-align: left; color: var(--text-dim); padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        td { padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 6px 0;
+            overflow: hidden;
+        }
+        .progress-bar { height: 100%; border-radius: 4px; transition: width 1s ease-in-out; }
+
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 5px;
+        }
+        .funnel-step {
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .alert-box {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid var(--danger);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .summary-text {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Standardized Gauges */
+        .gauge-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .gauge-canvas-wrapper { width: 300px; height: 150px; }
+        .gauge-text { position: absolute; bottom: 10px; text-align: center; }
+
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container" id="main-container">
+    <button class="nav-arrow prev" onclick="prevSlide()">&#10094;</button>
+    <button class="nav-arrow next" onclick="nextSlide()">&#10095;</button>
+
+    <div class="slide-container">
+        <!-- SLIDE 1: VISÃO GERAL -->
+        <div class="slide active" id="slide-1">
+            <div class="header">
+                <div>
+                    <h1>Superintendência Nascimento</h1>
+                    <p class="subtitle">Resultados Consolidados - Junho</p>
+                </div>
+                <span class="status-badge badge-danger">Abaixo da Meta</span>
+            </div>
+            <div class="content-grid">
+                <div class="card" style="align-items: center; justify-content: center;">
+                    <div class="gauge-container">
+                        <div class="gauge-canvas-wrapper">
+                            <canvas id="chart-s1-gauge"></canvas>
+                        </div>
+                        <div class="gauge-text">
+                            <div class="metric-value">42,7%</div>
+                            <div class="metric-label">Atingimento Global</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 5vw; margin-top: 20px;">
+                        <div style="text-align: center">
+                            <div class="metric-label">Realizado</div>
+                            <div class="metric-sub" style="color: var(--accent); font-weight: 700;">R$ 17.088.725</div>
+                        </div>
+                        <div style="text-align: center">
+                            <div class="metric-label">Meta Mínima</div>
+                            <div class="metric-sub" style="font-weight: 700;">R$ 40.000.000</div>
+                        </div>
+                        <div style="text-align: center">
+                            <div class="metric-label">Faltante</div>
+                            <div class="metric-sub" style="color: var(--danger); font-weight: 700;">R$ 22.911.275</div>
+                        </div>
+                    </div>
+                    <div class="summary-text" id="s1-summary">
+                        Faltam R$ 22.911.275,00 para a meta mínima da Superintendência (42,7% atingido).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: VGV POR DIRETORIA -->
+        <div class="slide" id="slide-2">
+            <div class="header">
+                <h1>VGV por Diretoria</h1>
+                <p class="subtitle">Comparativo de Desempenho Mensal</p>
+            </div>
+            <div class="content-grid grid-3-1">
+                <div class="card">
+                    <div class="card-title">Saldo VGV vs Meta Mínima</div>
+                    <div style="flex-grow: 1; min-height: 0;">
+                        <canvas id="chart-s2-bars"></canvas>
+                    </div>
+                </div>
+                <div class="card" style="gap: 10px; justify-content: center;">
+                    <div class="card-title">Status Resumo</div>
+                    <div class="card" style="padding: 10px; background: rgba(255,255,255,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Albuquerque</strong>
+                            <span class="status-badge badge-success">OK</span>
+                        </div>
+                        <small style="color: var(--warning)">Faltam R$ 1,46M p/ Lucro</small>
+                    </div>
+                    <div class="card" style="padding: 10px; background: rgba(255,255,255,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Moura</strong>
+                            <span class="status-badge badge-danger">58%</span>
+                        </div>
+                        <small style="color: var(--danger)">Faltam R$ 1,25M p/ Mínima</small>
+                    </div>
+                    <div class="card" style="padding: 10px; background: rgba(255,255,255,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Nascimento</strong>
+                            <span class="status-badge badge-danger">54%</span>
+                        </div>
+                        <small style="color: var(--danger)">Faltam R$ 2,29M p/ Mínima</small>
+                    </div>
+                    <div class="card" style="padding: 10px; background: rgba(255,255,255,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>Ribeiro</strong>
+                            <span class="status-badge badge-success">TOP</span>
+                        </div>
+                        <small style="color: var(--success)">Superou Meta de Lucro</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: DETALHAMENTO POR DIRETORIA (DYNAMICO) -->
+        <div class="slide" id="slide-3">
+            <div class="header">
+                <h1>Detalhamento por Diretoria</h1>
+                <div id="diretoria-status-badge"></div>
+            </div>
+            <div class="tabs-container" id="diretoria-tabs">
+                <div class="tab active" onclick="switchDiretoria('albuquerque')">Albuquerque</div>
+                <div class="tab" onclick="switchDiretoria('moura')">Moura</div>
+                <div class="tab" onclick="switchDiretoria('nascimento')">Nascimento</div>
+                <div class="tab" onclick="switchDiretoria('ribeiro')">Ribeiro</div>
+            </div>
+            <div class="dynamic-content grid-2-2" id="diretoria-content">
+                <div class="card">
+                    <div class="card-title">Equipes: VGV vs Meta Mínima</div>
+                    <div style="flex-grow: 1; min-height: 0;">
+                        <canvas id="chart-dir-equipes"></canvas>
+                    </div>
+                </div>
+                <div class="card" style="align-items: center;">
+                    <div class="card-title">Distribuição por Segmento</div>
+                    <div style="width: 100%; height: 100%; display: flex; justify-content: center;">
+                        <canvas id="chart-dir-segmentos"></canvas>
+                    </div>
+                </div>
+                <div class="card" style="grid-column: span 2;">
+                    <div class="card-title">Tabela de Desempenho das Equipes</div>
+                    <div style="overflow-y: auto;">
+                        <table id="table-dir-equipes">
+                            <thead>
+                                <tr>
+                                    <th>Equipe</th>
+                                    <th>Realizado (VGV)</th>
+                                    <th>Status</th>
+                                    <th>Observação</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: SEGMENTOS CONSOLIDADOS -->
+        <div class="slide" id="slide-4">
+            <div class="header">
+                <h1>Segmentos Consolidados</h1>
+                <p class="subtitle">Distribuição de Vendas na Superintendência</p>
+            </div>
+            <div class="content-grid grid-3-1">
+                <div class="card" style="align-items: center; justify-content: center;">
+                    <div style="width: 80%; height: 80%;">
+                        <canvas id="chart-s4-segmentos-total"></canvas>
+                    </div>
+                </div>
+                <div class="card" style="justify-content: center; gap: 15px;">
+                    <div class="card-title">Volume por Segmento</div>
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <div class="metric-value" style="color: var(--accent)">44</div>
+                        <div class="metric-label">Vendas Totais</div>
+                    </div>
+                    <div id="segment-bars-container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: CARTAS DE CRÉDITO -->
+        <div class="slide" id="slide-5">
+            <div class="header">
+                <h1>Cartas de Crédito Pré-Aprovadas</h1>
+                <span class="status-badge badge-success">Meta Global Superada (29,7%)</span>
+            </div>
+            <div class="content-grid grid-3-1">
+                <div class="card">
+                    <div class="card-title">% de Aproveitamento vs Meta (16,67%)</div>
+                    <div style="flex-grow: 1; min-height: 0;">
+                        <canvas id="chart-s5-aproveitamento"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Números Absolutos</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Diretoria</th>
+                                <th>Docs</th>
+                                <th>Aprov</th>
+                                <th>% Real</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Albuquerque</td><td>14</td><td>3</td><td style="color: var(--success); font-weight: 700;">21,4%</td></tr>
+                            <tr><td>Moura</td><td>14</td><td>1</td><td style="color: var(--danger); font-weight: 700;">7,1%</td></tr>
+                            <tr><td>Nascimento</td><td>77</td><td>29</td><td style="color: var(--success); font-weight: 700;">33,6%</td></tr>
+                            <tr><td>Ribeiro</td><td>26</td><td>6</td><td style="color: var(--success); font-weight: 700;">23,0%</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="summary-text" style="margin-top: 15px; padding: 10px;">
+                        Global: 39 Cartas em 131 Negócios
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: LEADS E FUNIL -->
+        <div class="slide" id="slide-6">
+            <div class="header">
+                <h1>Leads e Funil Comercial</h1>
+                <p class="subtitle">Desempenho de Conversão - Bitrix24</p>
+            </div>
+            <div class="content-grid grid-1-3">
+                <div class="card">
+                    <div class="card-title">Comercial Geral</div>
+                    <div class="funnel-container">
+                        <div class="funnel-step" style="background: #1e3a8a;">Entrada: 990</div>
+                        <div class="funnel-step" style="background: #ef4444; opacity: 0.8;">Perdas: 511</div>
+                        <div class="funnel-step" style="background: #10b981;">Ganhos: 7</div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between">
+                            <small>Taxa Conversão</small>
+                            <strong style="color: var(--danger)">0,71%</strong>
+                        </div>
+                        <div class="alert-box">⚠️ 4.736 prazos perdidos!</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Comercial Econômico</div>
+                    <div class="funnel-container">
+                        <div class="funnel-step" style="background: #1e3a8a;">Entrada: 640</div>
+                        <div class="funnel-step" style="background: #ef4444; opacity: 0.8;">Perdas: 382</div>
+                        <div class="funnel-step" style="background: #10b981; opacity: 0.3;">Ganhos: 0</div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between">
+                            <small>Taxa Conversão</small>
+                            <strong style="color: var(--danger)">0,00%</strong>
+                        </div>
+                        <div class="alert-box">Ponto Crítico: Zero conversões.</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Caixa Aqui</div>
+                    <div class="funnel-container">
+                        <div class="funnel-step" style="background: #1e3a8a;">Negócios: 131</div>
+                        <div class="funnel-step" style="background: #10b981;">Cartas: 39</div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <div style="display: flex; justify-content: space-between">
+                            <small>Aproveitamento</small>
+                            <strong style="color: var(--success)">29,70%</strong>
+                        </div>
+                        <div class="summary-text" style="margin-top: 10px; font-size: 0.8rem; padding: 10px;">Excelente desempenho.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-dots" id="nav-dots"></div>
+</div>
+
+<script>
+    // --- DATA ---
+    const diretoriaData = {
+        albuquerque: {
+            name: "Albuquerque",
+            status: "success",
+            statusText: "Meta Mínima Batida",
+            equipes: ["Dubai Brokers", "Gade", "Seals", "Titan"],
+            vgv: [3200000, 335000, 1000000, 0],
+            metas: [1000000, 1000000, 1000000, 1000000],
+            segmentos: [1, 3, 1, 0], // PPM, Litoral, M/A, Econ
+            table: [
+                { name: "Dubai Brokers", vgv: "R$ 3.200.000", status: "success", obs: "Superou Lucro (+R$ 1.2M)" },
+                { name: "Seals", vgv: "R$ 1.000.000", status: "success", obs: "Meta Batida Exatamente" },
+                { name: "Gade", vgv: "R$ 335.000", status: "danger", obs: "Faltam R$ 665.000" },
+                { name: "Titan", vgv: "-", status: "dim", obs: "Inativa em Junho" }
+            ]
+        },
+        moura: {
+            name: "Moura",
+            status: "danger",
+            statusText: "Abaixo da Meta",
+            equipes: ["Winners", "Domus", "Arretados"],
+            vgv: [965400, 0, 775060],
+            metas: [1000000, 1000000, 1000000],
+            segmentos: [1, 3, 0, 2],
+            table: [
+                { name: "Winners", vgv: "R$ 965.400", status: "warning", obs: "Faltam R$ 34.600" },
+                { name: "Arretados", vgv: "R$ 775.060", status: "danger", obs: "Faltam R$ 224.940" },
+                { name: "Domus", vgv: "R$ 0", status: "danger", obs: "Faltam R$ 1.000.000" }
+            ]
+        },
+        nascimento: {
+            name: "Nascimento",
+            status: "danger",
+            statusText: "Abaixo da Meta",
+            equipes: ["Garra", "Alpha Team", "Elite", "Reino", "Tornado"],
+            vgv: [1620486, 670980, 412000, 0, 0],
+            metas: [1000000, 1000000, 1000000, 1000000, 1000000],
+            segmentos: [1, 1, 1, 7],
+            table: [
+                { name: "Garra", vgv: "R$ 1.620.486", status: "success", obs: "Meta Mínima Batida" },
+                { name: "Alpha Team", vgv: "R$ 670.980", status: "danger", obs: "Faltam R$ 329.020" },
+                { name: "Elite", vgv: "R$ 412.000", status: "danger", obs: "Faltam R$ 588.000" },
+                { name: "Reino", vgv: "R$ 0", status: "danger", obs: "Faltam R$ 1.000.000" },
+                { name: "Tornado", vgv: "R$ 0", status: "danger", obs: "Faltam R$ 1.000.000" }
+            ]
+        },
+        ribeiro: {
+            name: "Ribeiro",
+            status: "success",
+            statusText: "Meta de Lucro Superada",
+            equipes: ["Bravo", "Champions", "Golden Team", "Prime"],
+            vgv: [5242305, 1916000, 725794, 225000],
+            metas: [1000000, 1000000, 1000000, 1000000],
+            segmentos: [0, 6, 6, 9],
+            table: [
+                { name: "Bravo", vgv: "R$ 5.242.305", status: "success", obs: "Superou Lucro (+R$ 3.2M)" },
+                { name: "Champions", vgv: "R$ 1.916.000", status: "success", obs: "Meta Mínima Batida" },
+                { name: "Golden Team", vgv: "R$ 725.794", status: "danger", obs: "Faltam R$ 274.206" },
+                { name: "Prime", vgv: "R$ 225.000", status: "danger", obs: "Faltam R$ 775.000" }
+            ]
+        }
+    };
+
+    // --- CAROUSEL LOGIC ---
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let autoRotate;
+    let isPaused = false;
+
+    function goToSlide(n) {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + totalSlides) % totalSlides;
+        slides[currentSlide].classList.add('active');
+        updateDots();
+    }
+
+    function nextSlide() { if(!isPaused) goToSlide(currentSlide + 1); }
+    function prevSlide() { goToSlide(currentSlide - 1); }
+
+    function updateDots() {
+        const dots = document.querySelectorAll('.dot');
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSlide);
+        });
+    }
+
+    // Initialize Dots
+    const dotsContainer = document.getElementById('nav-dots');
+    for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = i === 0 ? 'dot active' : 'dot';
+        dot.onclick = () => { goToSlide(i); resetTimer(); };
+        dotsContainer.appendChild(dot);
+    }
+
+    function resetTimer() {
+        clearInterval(autoRotate);
+        autoRotate = setInterval(nextSlide, 12000);
+    }
+
+    // Pause on Hover
+    document.getElementById('main-container').addEventListener('mouseenter', () => isPaused = true);
+    document.getElementById('main-container').addEventListener('mouseleave', () => isPaused = false);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') { nextSlide(); resetTimer(); }
+        if (e.key === 'ArrowLeft') { prevSlide(); resetTimer(); }
+    });
+
+    resetTimer();
+
+    // --- CHART CONFIGS ---
+    Chart.register(ChartDataLabels);
+    Chart.defaults.color = '#a8b2d1';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.plugins.datalabels.color = '#fff';
+    Chart.defaults.plugins.datalabels.font = { weight: 'bold', size: 10 };
+    Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+    const currencyFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+
+    // S1: Gauge
+    new Chart(document.getElementById('chart-s1-gauge'), {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: [17088725, 22911275],
+                backgroundColor: ['#3b82f6', 'rgba(255,255,255,0.05)'],
+                borderWidth: 0,
+                circumference: 180,
+                rotation: 270,
+                cutout: '80%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false }, datalabels: { display: false } }
+        }
+    });
+
+    // S2: Bars
+    new Chart(document.getElementById('chart-s2-bars'), {
+        type: 'bar',
+        data: {
+            labels: ['Albuquerque', 'Moura', 'Nascimento', 'Ribeiro'],
+            datasets: [
+                {
+                    label: 'Saldo VGV',
+                    data: [4535000, 1740460, 2704166, 8109099],
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4,
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        formatter: (val, ctx) => {
+                            const meta = [3000000, 3000000, 5000000, 4000000][ctx.dataIndex];
+                            const perc = ((val/meta)*100).toFixed(0);
+                            return `${currencyFormatter.format(val)}\n(${perc}%)`;
+                        }
+                    }
+                },
+                {
+                    label: 'Meta Mínima',
+                    data: [3000000, 3000000, 5000000, 4000000],
+                    type: 'line',
+                    borderColor: '#ef4444',
+                    borderWidth: 2,
+                    pointStyle: 'rectRot',
+                    pointRadius: 6,
+                    showLine: false,
+                    datalabels: { display: false }
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { display: false } },
+                x: { grid: { display: false } }
+            },
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // --- DYNAMIC DIRETORIA SLIDE ---
+    let dirEquipesChart, dirSegmentosChart;
+
+    function switchDiretoria(key) {
+        const content = document.getElementById('diretoria-content');
+        const data = diretoriaData[key];
+        
+        // Update Tabs
+        document.querySelectorAll('.tab').forEach(t => {
+            t.classList.toggle('active', t.innerText.toLowerCase() === key);
+        });
+
+        content.classList.add('fade-out');
+
+        setTimeout(() => {
+            // Update Badge
+            const badge = document.getElementById('diretoria-status-badge');
+            badge.innerHTML = `<span class="status-badge badge-${data.status}">${data.statusText}</span>`;
+
+            // Update Table
+            const tbody = document.querySelector('#table-dir-equipes tbody');
+            tbody.innerHTML = data.table.map(row => `
+                <tr>
+                    <td>${row.name}</td>
+                    <td>${row.vgv}</td>
+                    <td><span class="status-badge badge-${row.status}">${row.status === 'dim' ? 'Inativa' : row.status === 'success' ? 'OK' : 'Alerta'}</span></td>
+                    <td>${row.obs}</td>
+                </tr>
+            `).join('');
+
+            // Update Charts
+            updateDirCharts(data);
+
+            content.classList.remove('fade-out');
+        }, 300);
+    }
+
+    function updateDirCharts(data) {
+        if (dirEquipesChart) dirEquipesChart.destroy();
+        if (dirSegmentosChart) dirSegmentosChart.destroy();
+
+        dirEquipesChart = new Chart(document.getElementById('chart-dir-equipes'), {
+            type: 'bar',
+            data: {
+                labels: data.equipes,
+                datasets: [
+                    {
+                        label: 'Realizado',
+                        data: data.vgv,
+                        backgroundColor: '#3b82f6',
+                        borderRadius: 4,
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'right',
+                            formatter: (val, ctx) => {
+                                if(val === 0) return '';
+                                const meta = data.metas[ctx.dataIndex];
+                                return `${currencyFormatter.format(val)} (${((val/meta)*100).toFixed(0)}%)`;
+                            }
+                        }
+                    },
+                    {
+                        label: 'Meta Mínima',
+                        data: data.metas,
+                        type: 'line',
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        showLine: false,
+                        datalabels: { display: false }
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                maintainAspectRatio: false,
+                scales: { x: { beginAtZero: true, ticks: { display: false }, grid: { display: false } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        dirSegmentosChart = new Chart(document.getElementById('chart-dir-segmentos'), {
+            type: 'doughnut',
+            data: {
+                labels: ['PPM', 'Litoral', 'Médio/Alto', 'Econômico'],
+                datasets: [{
+                    data: data.segmentos,
+                    backgroundColor: ['#ef4444', '#10b981', '#f59e0b', '#3b82f6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    datalabels: { formatter: (val) => val > 0 ? val : '' }
+                }
+            }
+        });
+    }
+
+    // S4: Consolidated Segments
+    new Chart(document.getElementById('chart-s4-segmentos-total'), {
+        type: 'pie',
+        data: {
+            labels: ['PPM', 'Litoral', 'Médio/Alto', 'Econômico'],
+            datasets: [{
+                data: [4, 14, 8, 18],
+                backgroundColor: ['#ef4444', '#10b981', '#f59e0b', '#3b82f6'],
+                borderWidth: 0
+            }]
+        },
+        options: { 
+            maintainAspectRatio: false,
+            plugins: { datalabels: { font: { size: 14 } } }
+        }
+    });
+
+    const segments = [
+        { label: 'Econômico', val: 18, color: '#3b82f6', perc: 41 },
+        { label: 'Litoral', val: 14, color: '#10b981', perc: 32 },
+        { label: 'Médio/Alto', val: 8, color: '#f59e0b', perc: 18 },
+        { label: 'PPM', val: 4, color: '#ef4444', perc: 9 }
+    ];
+    document.getElementById('segment-bars-container').innerHTML = segments.map(s => `
+        <div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
+                <span>${s.label}</span>
+                <span>${s.val} vendas</span>
+            </div>
+            <div class="progress-container"><div class="progress-bar" style="width: ${s.perc}%; background: ${s.color};"></div></div>
+        </div>
+    `).join('');
+
+    // S5: Aproveitamento
+    new Chart(document.getElementById('chart-s5-aproveitamento'), {
+        type: 'bar',
+        data: {
+            labels: ['Albuquerque', 'Moura', 'Nascimento', 'Ribeiro'],
+            datasets: [
+                {
+                    label: '% Real',
+                    data: [21.4, 7.1, 33.6, 23.0],
+                    backgroundColor: (ctx) => ctx.raw >= 16.67 ? '#10b981' : '#ef4444',
+                    borderRadius: 4,
+                    datalabels: { anchor: 'end', align: 'top', formatter: v => v + '%' }
+                },
+                {
+                    label: 'Meta (16.67%)',
+                    data: [16.67, 16.67, 16.67, 16.67],
+                    type: 'line',
+                    borderColor: '#fff',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    datalabels: { display: false }
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, ticks: { display: false }, grid: { display: false } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Initialize first Diretoria
+    switchDiretoria('albuquerque');
+
+</script>
+</body>
+</html>
