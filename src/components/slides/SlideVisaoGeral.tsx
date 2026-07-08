@@ -4,7 +4,6 @@ import { useId, useMemo } from "react";
 import type { ScriptableContext } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { visaoGeral } from "@/data/dashboard-data";
-import { registerCharts } from "@/lib/chart-config";
 import { CHART, createGaugeOptions } from "@/lib/chart-theme";
 import { Card } from "@/components/ui/Card";
 import { ChartAccessible } from "@/components/ui/ChartAccessible";
@@ -15,9 +14,7 @@ function gaugeArcColor(ctx: ScriptableContext<"doughnut">) {
   return CHART.accent;
 }
 
-export function SlideVisaoGeral() {
-  registerCharts();
-  const baseId = useId();
+export function SlideVisaoGeral() {  const baseId = useId();
 
   const gaugeData = useMemo(
     () => ({

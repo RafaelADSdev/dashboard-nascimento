@@ -37,3 +37,7 @@ export function registerCharts() {
   ChartJS.defaults.plugins.legend.labels.usePointStyle = true;
   registered = true;
 }
+
+if (typeof window !== "undefined") {
+  registerCharts();
+}

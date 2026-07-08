@@ -4,7 +4,6 @@ import { useId, useMemo } from "react";
 import type { ScriptableContext, ChartData } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { cartasCredito } from "@/data/dashboard-data";
-import { registerCharts } from "@/lib/chart-config";
 import {
   CHART,
   createVerticalBarOptions,
@@ -16,9 +15,7 @@ import { Card } from "@/components/ui/Card";
 import { ChartAccessible } from "@/components/ui/ChartAccessible";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
-export function SlideCartasCredito() {
-  registerCharts();
-  const baseId = useId();
+export function SlideCartasCredito() {  const baseId = useId();
 
   const chartData = useMemo(
     () => ({

@@ -74,12 +74,14 @@ export function metaThresholdColor(value: number, meta: number) {
 }
 
 function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 export function getChartAnimation() {
+  const reduced = prefersReducedMotion();
   return {
-    duration: prefersReducedMotion() ? 0 : 600,
+    duration: reduced ? 0 : 600,
     easing: "easeOutQuart" as const,
   };
 }

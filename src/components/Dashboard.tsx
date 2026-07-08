@@ -208,7 +208,7 @@ export function Dashboard() {
   const [darkMode, setDarkMode] = useState(false);
   const [viewsOpen, setViewsOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastViewedAt, setLastViewedAt] = useState(() => new Date());
+  const [lastViewedAt, setLastViewedAt] = useState<Date | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [menuFocusIndex, setMenuFocusIndex] = useState(0);
 
@@ -217,7 +217,14 @@ export function Dashboard() {
   const viewsTriggerRef = useRef<HTMLButtonElement>(null);
 
   const activeMeta = VIEW_OPTIONS.find((v) => v.id === activeView)!;
-  const viewedAtLabel = useMemo(() => formatViewedAt(lastViewedAt), [lastViewedAt]);
+  const viewedAtLabel = useMemo(
+    () => (lastViewedAt ? formatViewedAt(lastViewedAt) : null),
+    [lastViewedAt],
+  );
+
+  useEffect(() => {
+    setLastViewedAt(new Date());
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
@@ -326,8 +333,9 @@ export function Dashboard() {
             </div>
             <h2>{activeMeta.title}</h2>
             <p>{activeMeta.subtitle}</p>
-            <p className="data-timestamp">
-              Período de referência: {DATA_REFERENCE_PERIOD} · Visualizado em {viewedAtLabel}
+            <p className="data-timestamp" suppressHydrationWarning>
+              Período de referência: {DATA_REFERENCE_PERIOD}
+              {viewedAtLabel ? ` · Visualizado em ${viewedAtLabel}` : ""}
             </p>
           </div>
           <div className="toolbar-actions">

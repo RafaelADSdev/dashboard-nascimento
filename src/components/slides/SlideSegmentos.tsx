@@ -3,14 +3,11 @@
 import { useId, useMemo } from "react";
 import { Pie } from "react-chartjs-2";
 import { segmentosConsolidados } from "@/data/dashboard-data";
-import { registerCharts } from "@/lib/chart-config";
 import { createPieOptions, segmentoDataset } from "@/lib/chart-theme";
 import { Card } from "@/components/ui/Card";
 import { ChartAccessible } from "@/components/ui/ChartAccessible";
 
-export function SlideSegmentos() {
-  registerCharts();
-  const baseId = useId();
+export function SlideSegmentos() {  const baseId = useId();
 
   const chartData = useMemo(
     () => ({

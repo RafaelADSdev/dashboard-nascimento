@@ -8,7 +8,6 @@ import {
   diretoriaKeys,
   type DiretoriaKey,
 } from "@/data/dashboard-data";
-import { registerCharts } from "@/lib/chart-config";
 import {
   createDoughnutOptions,
   createHorizontalBarOptions,
@@ -22,8 +21,6 @@ import { ChartAccessible } from "@/components/ui/ChartAccessible";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 export function SlideDiretoriaDetalhe() {
-  registerCharts();
-
   const baseId = useId();
   const [activeKey, setActiveKey] = useState<DiretoriaKey>("albuquerque");
   const [fading, setFading] = useState(false);
