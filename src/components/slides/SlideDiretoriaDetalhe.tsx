@@ -2,7 +2,7 @@
 
 import { useCallback, useId, useMemo, useState, type KeyboardEvent } from "react";
 import type { ScriptableContext, ChartData } from "chart.js";
-import { Chart, Doughnut } from "react-chartjs-2";
+import { Chart, Doughnut } from "@/lib/charts";
 import {
   diretoriaData,
   diretoriaKeys,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useMemo } from "react";
-import { Pie } from "react-chartjs-2";
+import { Pie } from "@/lib/charts";
 import { segmentosConsolidados } from "@/data/dashboard-data";
 import { createPieOptions, segmentoDataset } from "@/lib/chart-theme";
 import { Card } from "@/components/ui/Card";

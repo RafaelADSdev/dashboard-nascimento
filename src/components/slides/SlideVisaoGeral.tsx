@@ -2,7 +2,7 @@
 
 import { useId, useMemo } from "react";
 import type { ScriptableContext } from "chart.js";
-import { Doughnut } from "react-chartjs-2";
+import { Doughnut } from "@/lib/charts";
 import { visaoGeral } from "@/data/dashboard-data";
 import { CHART, createGaugeOptions } from "@/lib/chart-theme";
 import { Card } from "@/components/ui/Card";

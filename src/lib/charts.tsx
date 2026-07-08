@@ -2,28 +2,41 @@
 
 import {
   ArcElement,
+  BarController,
   BarElement,
   CategoryScale,
   Chart as ChartJS,
+  DoughnutController,
   Legend,
   LinearScale,
+  LineController,
   LineElement,
+  PieController,
   PointElement,
   Tooltip,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
+import {
+  Chart as ChartComponent,
+  Doughnut as DoughnutComponent,
+  Pie as PieComponent,
+} from "react-chartjs-2";
 import { CHART, chartGlowPlugin, datalabelDefaults } from "./chart-theme";
 
 let registered = false;
 
-export function registerCharts() {
+function registerCharts() {
   if (registered) return;
   ChartJS.register(
     ArcElement,
+    BarController,
     BarElement,
     CategoryScale,
+    DoughnutController,
     LinearScale,
+    LineController,
     LineElement,
+    PieController,
     PointElement,
     Tooltip,
     Legend,
@@ -38,6 +51,8 @@ export function registerCharts() {
   registered = true;
 }
 
-if (typeof window !== "undefined") {
-  registerCharts();
-}
+registerCharts();
+
+export const Chart = ChartComponent;
+export const Doughnut = DoughnutComponent;
+export const Pie = PieComponent;
